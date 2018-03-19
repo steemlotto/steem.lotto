@@ -249,30 +249,21 @@ function getLottoHistory(){
                       var memo = {};
                       try{  
                           memo = JSON.parse(memo_json);
-                         // console.log(memo);
-                      }catch(e){
-                          //console.log(e);
-                          memo.bet    = "";
-                          memo.result = "";
-                          memo.trx_id = "";
-                      }
+                          var r='lost';
+                          var setClass="lost";
+                          if( parseFloat(element[1].op[1].amount.split(" ")[0]) > 0.100){
+                              r = "won";
+                              setClass="won";
+                          }
 
-                      var r='lost';
-                      var setClass="lost";
-                      if( parseFloat(element[1].op[1].amount.split(" ")[0]) > 0.100){
-                          r = "won";
-                          setClass="won";
-                      }
-
-      
-                      table += "<tr>"+
-                      "<td>" + element[1].op[1].to + "</td>" +
-                      "<td>" + memo.bet + "</td>" +
-                      "<td>" + memo.trx_id + "</td>" +
-                      "<td>" + memo.result + "</td>" +
-                      "<td class='" + setClass + "'>" + r + "</td></tr>";
-                      
-
+                          table += "<tr>"+
+                          "<td>" + element[1].op[1].to + "</td>" +
+                          "<td>" + memo.bet + "</td>" +
+                          "<td>" + memo.trx_id + "</td>" +
+                          "<td>" + memo.result + "</td>" +
+                          "<td class='" + setClass + "'>" + r + "</td></tr>";
+                          }catch(e){}
+                    
                    }
 
               }

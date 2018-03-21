@@ -11,15 +11,20 @@ var currency_steem    = " STEEM";
 var currency_sbd      = " SBD";
 var selected_currency = currency_sbd;
 var bandwidth = true;
-var user = {}
 
-user.name    = "";
-user.wif     = "";
-user.pub     = "";
-user.picture = "";
-user.sbd     = 0;
-user.steem   = 0;
-user.login   = false;
+var user = JSON.parse(localStorage.getItem('user'));
+if(user){
+    removeLoginLink();
+}else{
+  user = {};
+  user.name    = "";
+  user.wif     = "";
+  user.pub     = "";
+  user.picture = "";
+  user.sbd     = 0;
+  user.steem   = 0;
+  user.login   = false; 
+}
 
 
 getLottoHistory();
@@ -152,20 +157,8 @@ function login(){
           if(auths[i][1] >= threshold && auths[i][0] == user.pub) {
             user.login = true;
             user.wif = key;
-            $('#login-modal').hide();
-            $('#sbd').html(user.sbd);
-            $('#steem').html(user.steem);
-            $('#name').html(user.name);
-            $('#image').html('<div class="Avatar" style="min-width:20px;width:20px;'+
-                               'display: block !important;' +
-                              'border-radius: 50%;' +
-                              'background-size: cover;' +
-                              'background-repeat: no-repeat;' +
-                              'background-position: 50% 50%;' +
-                              'border: 1px solid #e9e7e7;' +
-                              'height:20px;background-image:url('+ user.image + ')"></div>');
-
-            $("#myModal").modal('hide');
+            removeLoginLink();
+            localStorage.setItem('user', JSON.stringify(user));
           }else{
              $('.alert-danger').html('Incorrect password!').removeClass('hidden');
              console.log('error');
@@ -178,6 +171,34 @@ function login(){
 
   });}
 
+function removeLoginLink(){
+  $('#login-modal').hide();
+  $('#logout').show();
+  $('#sbd').html(user.sbd);
+  $('#steem').html(user.steem);
+  $('#name').html(user.name);
+  $('#image').html('<div class="Avatar" style="min-width:20px;width:20px;'+
+                     'display: block !important;' +
+                    'border-radius: 50%;' +
+                    'background-size: cover;' +
+                    'background-repeat: no-repeat;' +
+                    'background-position: 50% 50%;' +
+                    'border: 1px solid #e9e7e7;' +
+                    'height:20px;background-image:url('+ user.image + ')"></div>');
+
+  $("#myModal").modal('hide');
+}
+
+function logout(){
+  $('#login-modal').show();
+  $('#logout').hide();
+  localStorage.removeItem('user');
+  user = {};
+  $('#sbd').html('');
+  $('#steem').html('');
+  $('#name').html('');
+  $('#image').html('');
+}
 
 function buy(game, cost){
 
@@ -196,7 +217,7 @@ function buy(game, cost){
         if(err.message.indexOf("_db.get_balance") > 0){
           $('#myModal').find(".modal-body").html("You don't have enough money to make this transfer.");
         }else{
-          $('#myModal').find(".modal-body").html("Unexpection error. Please try again latter");
+          $('#myModal').find(".modal-body").html("Unexpection error. Please try again latter.");
         }
       
         console.log(err);
@@ -321,7 +342,7 @@ function getResult(username){
 function hasBandwich(){
 
 
-  steem.api.getAccountsAsync(['raise-me-up'])
+  steem.api.getAccountsAsync([vendor])
   .then(function (result) {
     steem.api.getDynamicGlobalPropertiesAsync()
       .then(function (gprops) {

@@ -371,7 +371,9 @@ function hasBandwich(){
 
         let b = 100 - (100 * new_bandwidth / bandwidthAllocated);
         if(b < 1){
-            bandwidth = false;
+          bandwidth = false;
+        }else{
+          bandwidth = true;
         }
 
       })

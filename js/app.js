@@ -250,9 +250,9 @@ function refreshAccount(username){
 }
 
 function getLottoHistory(){
-  steem.api.getAccountHistory(vendor, -1 , 23, function(err, resultHisoty) {
+  steem.api.getAccountHistory(vendor, -1 , 99, function(err, resultHisoty) {
           var table = "";
-
+          var limit = 10;
           if(err){
             table += "NO connection to steem blockchain network";
           }else{
@@ -263,6 +263,10 @@ function getLottoHistory(){
                           "<th>result</th><th>won/lost</th></tr></thead><tbody>";
               ;
               for (let element  of resultHisoty) {
+
+                if(limit < 0){
+                  break;
+                }
                 //console.log(element);
                    if(element[1].op[0] == 'transfer' && element[1].op[1].from == vendor ){
 
@@ -283,6 +287,7 @@ function getLottoHistory(){
                           "<td>" + memo.trx_id + "</td>" +
                           "<td>" + memo.result + "</td>" +
                           "<td class='" + setClass + "'>" + r + "</td></tr>";
+                          limit--;
                           }catch(e){}
                     
                    }
